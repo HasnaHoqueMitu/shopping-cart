@@ -64,9 +64,9 @@
                      </div>
 
                      <div class="col-md-4 status">
-                        <h5>$1,278</h5>
-                        <h5>$0</h5>
-                        <h5>$1,278</h5>
+                        <h5>$<span id="subTotal">1,278</span></h5>
+                        <h5>$ <span id="tax">5</span></h5>
+                        <h5>$ <span id="total">1,278</span> </h5>
                      </div>
                   </div>
                </div>
@@ -80,53 +80,101 @@
 </body>
 
 <script>
+   const MobileFixedPriceTxt = document.getElementById("mobilePrice").innerText;
+   const MobileFixedPrice = parseFloat(MobileFixedPriceTxt);
+
+   const CaseFixedPriceTxt = document.getElementById("casePrice").innerText;
+   const CaseFixedPrice = parseFloat(CaseFixedPriceTxt);
+
+   let updatedMobilePrice = MobileFixedPrice;
+   let updatedCasePrice = CaseFixedPrice;
+
+   const Tax = document.getElementById("tax").innerText;
+   const TaxAmount = parseFloat(Tax);
+
+   let mobileQuantity = document.getElementById("mobQuantity").innerText.parseFloat;
+   let caseQuantity = document.getElementById("caseQuantity").innerText.parseFloat;
+
+   //mobile quantity
    const MobilePlus = document.getElementById("mobilePlus");
    MobilePlus.addEventListener("click", function(){
-   const MobileQuantity = getWantedMobile("mobQuantity", 1);
+   const MobileQuantity = getWantedProduct("mobQuantity", 1);
 
-   updatePrice("mobilePrice", MobileQuantity, 1);
+   updatedMobilePrice = updateMobilePrice("mobilePrice", MobileQuantity, 1);
+   let updateSubTotalreturn = updateSubTotal("subTotal", updatedMobilePrice, updatedCasePrice);   
+   getTotalWithTax("total", TaxAmount, updateSubTotalreturn);
    })
 
    const MobileMinus = document.getElementById("mobileMinus");
    MobileMinus.addEventListener("click", function(){
-   const mobileQuantity = getWantedMobile("mobQuantity", -1);
+   const mobileQuantity = getWantedProduct("mobQuantity", -1);
 
-   updatePrice("mobilePrice", mobileQuantity, -1);
+   updatedMobilePrice = updateMobilePrice("mobilePrice", mobileQuantity, -1);
+   let updateSubTotalreturn = updateSubTotal("subTotal", updatedMobilePrice, updatedCasePrice);
+   getTotalWithTax("total", TaxAmount, updateSubTotalreturn); 
    })
 
+   //case quantity
    const CasePlus = document.getElementById("casePlus");
    CasePlus.addEventListener("click", function(){
-   const CaseQuantity = getWantedMobile("caseQuantity", 1);
+   const CaseQuantity = getWantedProduct("caseQuantity", 1);
 
-   updatePrice("casePrice", CaseQuantity, 1);
+   updatedCasePrice = updateCasePrice("casePrice", CaseQuantity, 1);
+   let updateSubTotalreturn = updateSubTotal("subTotal", updatedMobilePrice, updatedCasePrice); 
+   getTotalWithTax("total", TaxAmount, updateSubTotalreturn);
    })
 
    const CaseMinus = document.getElementById("caseMinus");
    CaseMinus.addEventListener("click", function(){
-   const caseQuantity = getWantedMobile("caseQuantity", -1);
+   const caseQuantity = getWantedProduct("caseQuantity", -1);
 
-   updatePrice("casePrice", caseQuantity, -1);
+   updatedCasePrice = updateCasePrice("casePrice", caseQuantity, -1);
+   let updateSubTotalreturn = updateSubTotal("subTotal", updatedMobilePrice, updatedCasePrice); 
+   getTotalWithTax("total", TaxAmount, updateSubTotalreturn);
    })
 
-  
-   function getWantedMobile(id, sign){
-      console.log(sign);
-      
+
+   function getWantedProduct(id, sign){
+
       const CurrentProduct = document.getElementById(id).value;
       const currentProductNumber = parseFloat(CurrentProduct);
-      const totalProduct = currentProductNumber + (1*sign);
+      let totalProduct = currentProductNumber + (1*sign);
+      if(totalProduct<0){
+         alert("Negative quantity not possible");
+         totalProduct = 0;
+      }
       document.getElementById(id).value = totalProduct;
       return totalProduct;
    }
 
-   function updatePrice(id, MobileQuantity, sign){
-      const currentPriceTxt = document.getElementById(id).innerText;
-      const currentPrice = parseFloat(currentPriceTxt);
-      const updatedPrice = currentPrice*MobileQuantity;
-      
-      document.getElementById(id).innerText = updatedPrice;
+   function updateMobilePrice(id, MobileQuantity, sign){ 
+      const updatedMobilePrice = MobileFixedPrice*MobileQuantity;    
+      document.getElementById(id).innerText = updatedMobilePrice;
+      return updatedMobilePrice;
    }
 
+   function updateCasePrice(id, caseQuantity, sign){
+      const updatedCasePrice = CaseFixedPrice*caseQuantity;    
+      document.getElementById(id).innerText = updatedCasePrice;
+      return updatedCasePrice;
+   }
+
+   function updateSubTotal(id, updatedMobilePrice, updatedCasePrice){
+      const finalSubtotal = updatedMobilePrice + updatedCasePrice;
+      document.getElementById(id).innerText = finalSubtotal;
+      return finalSubtotal;
+   }
+
+   function getTotalWithTax(id, TaxAmount, updateSubTotal){
+      let totalWithTax;
+      if(TaxAmount!= 0){
+         totalWithTax = (TaxAmount * updateSubTotal *(1/100)) + updateSubTotal;   
+      }
+      else{
+         totalWithTax =  updateSubTotal;
+      }
+      document.getElementById(id).innerText = totalWithTax;
+   }
 
 </script>
 
